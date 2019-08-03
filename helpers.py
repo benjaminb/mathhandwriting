@@ -1,5 +1,8 @@
+import os, re
+import PIL
 import xml.etree.ElementTree as ET
-import re
+import numpy as np
+from matplotlib import image
 from inkml2img import inkml2img
 
 def generate_dataset(filelist):
@@ -36,8 +39,7 @@ def extract_labels(inkml_files):
     return labels, successes, failures
 
 def generate_images(inkml_files, labels):
-    successes = []
-    failures = []
+    successes, failures = [], []
 
     for i, infile in enumerate(inkml_files):
         # Create a unique filename
@@ -71,26 +73,6 @@ def get_label(file):
 
     return None
 
-# def make_images_from_valid_labels(Y):
-#     to_delete = []
-#     for i, y in enumerate(Y):
-#         outfile = create_image_path(file)
-#         file = y['inkml_path']
-#         try:
-#             inkml2img(file, outfile)
-#         except:
-#             print('Could not convert', file)
-#             unconvertable.append(i)
-#             to_delete.append(i)
-#             continue
-#
-#         # Update globals
-#         y.update({'image_path': outfile})
-
-
-# def remove_invalid_labels(deletions):
-#     for i in sorted(deletions, reverse=True):
-#         del Y[i]
 
 
 def get_max_dims(image_paths):
@@ -99,6 +81,8 @@ def get_max_dims(image_paths):
     return max(heights), max(widths)
 
 def process_images(image_paths):
+    max_dims = get_max_dims(image_paths)
+    img_arrays = []
 
     for path in image_paths:
         # Convert to grayscale
@@ -111,8 +95,12 @@ def process_images(image_paths):
         # Convert to np.array
         img_array = image.imread(TEMP_FILE)
         img_array = normalize_image_dims(arr=img_array, max_dims=max_dims)
-        X.append(img_array)
+        img_array = img_array.astype('float32')
+        img_arrays.append(img_array)
         os.remove(TEMP_FILE)
+
+    return img_arrays
+
 
 def normalize_image_dims(arr, max_dims):
     shape = arr.shape

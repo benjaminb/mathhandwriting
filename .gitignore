@@ -1,2 +1,5 @@
 # Ignore image directory
 images/
+
+# Ignore .DSstore
+.DS_Store
