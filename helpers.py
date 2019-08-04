@@ -55,6 +55,7 @@ def generate_images(inkml_files, labels):
 
         # Update globals
         successes.append(outfile)
+        print('Converted', outfile)
     return labels, successes, failures
 
 # Gets the latex label from the tree of a parsed inkml file

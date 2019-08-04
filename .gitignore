@@ -6,3 +6,6 @@ images/
 
 # Ignore pickle files
 *.p
+
+# Ignore key
+*.pem
