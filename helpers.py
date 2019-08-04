@@ -25,6 +25,7 @@ def extract_labels(inkml_files):
     labels, successes, failures = [], [], []
 
     for file in inkml_files:
+        print('Attempting to convert', file)
         try:
             label = get_label(file)
         except:
