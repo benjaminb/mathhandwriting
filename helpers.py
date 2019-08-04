@@ -8,6 +8,7 @@ from inkml2img import inkml2img
 def generate_dataset(filelist):
     labels = []
     labels, ok_files, problem_files = extract_labels(filelist)
+    print('Problem files:', len(problem_files))
     labels, ok_files, more_problems = generate_images(ok_files, labels)
     problem_files.extend(more_problems)
 
@@ -25,7 +26,6 @@ def extract_labels(inkml_files):
     labels, successes, failures = [], [], []
 
     for file in inkml_files:
-        print('Attempting to convert', file)
         try:
             label = get_label(file)
         except:
@@ -36,27 +36,38 @@ def extract_labels(inkml_files):
         # Successfully retrieved a label
         labels.append(label)
         successes.append(file)
-
+    print('Labels {}, Successes {}'.format(len(labels), len(successes)))
+    if len(labels) != len(successes):
+        print("Not equal!")
     return labels, successes, failures
 
 def generate_images(inkml_files, labels):
-    successes, failures = [], []
+    successes, failures, to_delete = [], [], []
+
+    print('{} files and {} labels'.format(len(inkml_files), len(labels)))
 
     for i, infile in enumerate(inkml_files):
+        print('index:', i)
         # Create a unique filename
         outfile = create_image_path(infile)
         try:
             inkml2img(infile, outfile)
         except:
-            print('Could not convert', infile)
+            # print('Could not convert', infile)
             failures.append(infile)
             # Delete the label so files & labels stay synced
-            del labels[i]
+            to_delete.append(i)
+            # del labels[i]
             continue
 
         # Update globals
         successes.append(outfile)
         print('Converted', outfile)
+
+    for i in sorted(to_delete, reverse=True):
+        print('deleting labels index', i)
+        del labels[i]
+        
     return labels, successes, failures
 
 # Gets the latex label from the tree of a parsed inkml file
