@@ -3,3 +3,6 @@ images/
 
 # Ignore .DSstore
 .DS_Store
+
+# Ignore pickle files
+*.p
