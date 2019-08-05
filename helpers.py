@@ -67,7 +67,7 @@ def generate_images(inkml_files, labels):
     for i in sorted(to_delete, reverse=True):
         print('deleting labels index', i)
         del labels[i]
-        
+
     return labels, successes, failures
 
 # Gets the latex label from the tree of a parsed inkml file
@@ -101,6 +101,7 @@ def process_images(image_paths):
         # Convert to grayscale
         TEMP_FILE = 'temp_gs_conversion.png'
 
+        print('processing', path)
         img = PIL.Image.open(path)
         gs_img = img.convert(mode='L')
         gs_img.save(TEMP_FILE)
